@@ -1,17 +1,11 @@
-{
-    "21/06/2025": [
-      { "name": "Nguyễn Văn A", "quantity": 120, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Trần Thị B", "quantity": 85, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Lê Văn C", "quantity": 150, "unitPrice": 250, "status": "Chờ xử lý" }
-    ],
-    "22/06/2025": [
-      { "name": "Nguyễn Văn A", "quantity": 95, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Phạm Thị D", "quantity": 110, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Hoàng Văn E", "quantity": 75, "unitPrice": 250, "status": "Chờ xử lý" }
-    ],
-    "23/06/2025": [
-      { "name": "Nguyễn Văn A", "quantity": 130, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Trần Thị B", "quantity": 90, "unitPrice": 250, "status": "Đã thanh toán" },
-      { "name": "Vũ Thị F", "quantity": 60, "unitPrice": 250, "status": "Chờ xử lý" }
-    ]
-  }
+"29/06/2025": [
+  { "name": "Khánh Ngọc", "quantity": 90, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Bảo Ngọc", "quantity": 652, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Nam Ái", "quantity": 570, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Meo", "quantity": 106, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Trang Đangiu", "quantity": 265, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Khánh", "quantity": 50, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Linh Pham", "quantity": 71, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Nhẫn", "quantity": 37, "unitPrice": 300, "status": "Chưa thanh toán" },
+  { "name": "Trang", "quantity": 477, "unitPrice": 300, "status": "Chưa thanh toán" }
+]
