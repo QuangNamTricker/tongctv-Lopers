@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Quản Lý - Đăng Nhập</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --danger-color: #f72585;
+      --success-color: #4cc9f0;
+      --dark-color: #1a1a2e;
+      --light-color: #f8f9fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .logo-icon i {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      background: linear-gradient(to right, #fff, #c9d6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-form {
+      margin-top: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      text-align: left;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-password:hover {
+      color: white;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      color: var(--danger-color);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      text-align: left;
+      display: none;
+    }
+
+    .login-footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .login-footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Loading animation */
+    .loading {
+      display: none;
+      margin: 15px auto;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+        margin: 0 15px;
+      }
+
+      .logo-icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <div class="logo-icon">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h1>Hệ Thống Quản Lý</h1>
+    </div>
+
+    <form class="login-form" id="loginForm">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" class="form-control" placeholder="Nhập tên đăng nhập" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <div class="password-container">
+          <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu" required>
+          <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+        </div>
+        <div class="error-message" id="errorMessage">
+          Mật khẩu không chính xác. Vui lòng thử lại.
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="loginBtn">
+        <span id="btnText">Đăng Nhập</span>
+        <div class="loading" id="loadingSpinner"></div>
+      </button>
+
+      <div class="login-footer">
+        <p>Liên hệ quản trị viên nếu bạn quên mật khẩu</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const togglePassword = document.getElementById('togglePassword');
+      const errorMessage = document.getElementById('errorMessage');
+      const loginBtn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+
+      // Định nghĩa mật khẩu đúng (trong thực tế nên kiểm tra từ server)
+      const CORRECT_PASSWORD = "admin123"; // Thay đổi mật khẩu này theo nhu cầu
+      const CORRECT_USERNAME = "tuquangnam"; // Tên đăng nhập mặc định
+
+      // Toggle hiển thị mật khẩu
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Xử lý đăng nhập
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        // Hiển thị loading
+        btnText.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        loginBtn.disabled = true;
+
+        // Giả lập kiểm tra đăng nhập (setTimeout để giả lập delay gọi API)
+        setTimeout(function() {
+          // Ẩn loading
+          btnText.style.display = 'block';
+          loadingSpinner.style.display = 'none';
+          loginBtn.disabled = false;
+
+          // Kiểm tra thông tin đăng nhập
+          if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+            // Lưu trạng thái đăng nhập vào localStorage
+            localStorage.setItem('isAuthenticated', 'true');
+            
+            // Chuyển hướng đến trang chính
+            window.location.href = '../trang-chu.html';
+          } else {
+            // Hiển thị thông báo lỗi
+            errorMessage.style.display = 'block';
+            passwordInput.focus();
+            
+            // Hiệu ứng shake khi nhập sai
+            loginForm.classList.add('shake');
+            setTimeout(() => {
+              loginForm.classList.remove('shake');
+            }, 500);
+          }
+        }, 1000); // Giả lập thời gian gọi API 1 giây
+      });
+
+      // Kiểm tra nếu đã đăng nhập thì chuyển hướng luôn
+      if (localStorage.getItem('isAuthenticated') === 'true') {
+        window.location.href = '../trang-chu.html';
+      }
+
+      // Focus vào ô username khi trang load
+      usernameInput.focus();
+    });
+  </script>
+
+  <style>
+    /* Thêm hiệu ứng shake khi nhập sai */
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(2px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Quản Lý Lương Đa Nhánh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    .charts-page {
+      padding: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .header-title h2 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+    
+    .header-title h2 i {
+      color: #4361ee;
+    }
+    
+    .header-title p {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .chart-period-selector {
+      display: flex;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    
+    .period-btn {
+      padding: 8px 15px;
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #7f8c8d;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .period-btn.active {
+      background-color: #4361ee;
+      color: white;
+    }
+    
+    .period-btn:not(.active):hover {
+      background-color: #f8f9fa;
+      color: #4361ee;
+    }
+    
+    .btn {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .btn i {
+      font-size: 0.9em;
+    }
+    
+    .export-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+    
+    .export-btn:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+    }
+    
+    .chart-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .filter-group label {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      white-space: nowrap;
+    }
+    
+    .nice-select {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-family: 'Poppins', sans-serif;
+      min-width: 150px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: white;
+    }
+    
+    .nice-select:focus {
+      outline: none;
+      border-color: #4361ee;
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    }
+    
+    .date-range-input {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-family: 'Poppins', sans-serif;
+      min-width: 200px;
+      transition: all 0.3s ease;
+    }
+    
+    .date-range-input:focus {
+      outline: none;
+      border-color: #4361ee;
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    }
+    
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 1200px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .chart-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chart-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .main-chart {
+      grid-column: 1 / span 2;
+    }
+    
+    @media (max-width: 1200px) {
+      .main-chart {
+        grid-column: 1;
+      }
+    }
+    
+    .chart-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .chart-header h3 {
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+    
+    .chart-actions {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #f8f9fa;
+      color: #7f8c8d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-icon:hover {
+      background-color: #e9ecef;
+      color: #4361ee;
+    }
+    
+    .chart-container {
+      position: relative;
+      padding: 15px;
+      flex: 1;
+      min-height: 300px;
+    }
+    
+    .chart-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #eee;
+    }
+    
+    .chart-summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .summary-label {
+      font-size: 0.85rem;
+      color: #7f8c8d;
+    }
+    
+    .summary-value {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    
+    .summary-value.up {
+      color: #2ecc71;
+    }
+    
+    .summary-value.down {
+      color: #e74c3c;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .legend-color.meiu {
+      background-color: #4361ee;
+    }
+    
+    .legend-color.s02 {
+      background-color: #4cc9f0;
+    }
+    
+    /* Fullscreen modal styles */
+    .fullscreen-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      font-size: 1.3rem;
+      color: #2c3e50;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: all 0.3s ease;
+    }
+    
+    .close-modal:hover {
+      color: #e74c3c;
+      transform: rotate(90deg);
+    }
+    
+    .modal-body {
+      padding: 20px;
+      flex: 1;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .header-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      
+      .chart-period-selector {
+        width: 100%;
+      }
+      
+      .period-btn {
+        flex: 1;
+        text-align: center;
+      }
+      
+      .chart-filters {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        width: 100%;
+      }
+      
+      .nice-select, .date-range-input {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .chart-summary {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .summary-item {
+        justify-content: space-between;
+      }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="charts-page">
+        <div class="page-header">
+          <div class="header-title">
+            <h2><i class="fas fa-chart-pie"></i> Phân Tích Dữ Liệu</h2>
+            <p>Trực quan hóa dữ liệu lương và hiệu suất làm việc</p>
+          </div>
+          <div class="header-actions">
+            <div class="chart-period-selector">
+              <button class="period-btn active" data-period="week">Tuần</button>
+              <button class="period-btn" data-period="month">Tháng</button>
+              <button class="period-btn" data-period="quarter">Quý</button>
+              <button class="period-btn" data-period="year">Năm</button>
+            </div>
+            <button class="btn export-btn" id="exportCharts">
+              <i class="fas fa-download"></i> Xuất báo cáo
+            </button>
+          </div>
+        </div>
+      
+        <div class="chart-filters">
+          <div class="filter-group">
+            <label for="branchFilter"><i class="fas fa-code-branch"></i> Nhóm:</label>
+            <select id="branchFilter" class="nice-select">
+              <option value="all">Tất cả nhóm</option>
+              <option value="meiu">MEIU</option>
+              <option value="s02">S02-LOPERS</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="chartTypeFilter"><i class="fas fa-chart-bar"></i> Loại biểu đồ:</label>
+            <select id="chartTypeFilter" class="nice-select">
+              <option value="line">Đường</option>
+              <option value="bar">Cột</option>
+              <option value="pie">Tròn</option>
+              <option value="radar">Radar</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="dateRangeFilter"><i class="fas fa-calendar-alt"></i> Khoảng thời gian:</label>
+            <input type="text" id="dateRangeFilter" class="date-range-input" placeholder="Chọn khoảng thời gian">
+          </div>
+        </div>
+      
+        <div class="charts-grid">
+          <!-- Main Salary Chart -->
+          <div class="chart-card main-chart">
+            <div class="chart-header">
+              <h3>Biểu đồ lương theo thời gian</h3>
+              <div class="chart-actions">
+                <button class="btn btn-icon chart-fullscreen" data-chart="mainChart">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="mainChart"></canvas>
+            </div>
+            <div class="chart-footer">
+              <div class="chart-summary">
+                <div class="summary-item">
+                  <span class="summary-label">Tổng lương:</span>
+                  <span class="summary-value" id="totalSalary">0đ</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Thay đổi:</span>
+                  <span class="summary-value up" id="salaryChange">0% <i class="fas fa-arrow-up"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Team Comparison Chart -->
+          <div class="chart-card comparison-chart">
+            <div class="chart-header">
+              <h3>So sánh hiệu suất nhóm</h3>
+              <div class="chart-actions">
+                <button class="btn btn-icon chart-fullscreen" data-chart="comparisonChart">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="comparisonChart"></canvas>
+            </div>
+            <div class="chart-footer">
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color meiu"></span>
+                  <span>MEIU</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color s02"></span>
+                  <span>S02-LOPERS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Member Distribution Chart -->
+          <div class="chart-card distribution-chart">
+            <div class="chart-header">
+              <h3>Phân bổ lương theo thành viên</h3>
+              <div class="chart-actions">
+                <button class="btn btn-icon chart-fullscreen" data-chart="distributionChart">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="distributionChart"></canvas>
+            </div>
+            <div class="chart-footer">
+              <div class="chart-summary">
+                <div class="summary-item">
+                  <span class="summary-label">Thành viên hàng đầu:</span>
+                  <span class="summary-value" id="topMember">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Payment Status Chart -->
+          <div class="chart-card payment-chart">
+            <div class="chart-header">
+              <h3>Trạng thái thanh toán</h3>
+              <div class="chart-actions">
+                <button class="btn btn-icon chart-fullscreen" data-chart="paymentChart">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="paymentChart"></canvas>
+            </div>
+            <div class="chart-footer">
+              <div class="chart-summary">
+                <div class="summary-item">
+                  <span class="summary-label">Đã thanh toán:</span>
+                  <span class="summary-value" id="paidAmount">0đ</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Chờ xử lý:</span>
+                  <span class="summary-value" id="pendingAmount">0đ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fullscreen Modal -->
+        <div class="fullscreen-modal" id="fullscreenModal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 id="fullscreenChartTitle">Biểu đồ</h3>
+              <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <canvas id="fullscreenChartCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Load data from both branches
+        const meiuDataFile = '../data/meiu.json';
+        const s02DataFile = '../data/s02-lopers.json';
+        
+        let allData = {};
+        let currentPeriod = 'month';
+        let currentChartType = 'line';
+        let currentBranch = 'all';
+        
+        // DOM Elements
+        const periodBtns = document.querySelectorAll('.period-btn');
+        const branchFilter = document.getElementById('branchFilter');
+        const chartTypeFilter = document.getElementById('chartTypeFilter');
+        const dateRangeFilter = document.getElementById('dateRangeFilter');
+        
+        // Chart elements
+        const mainChartCtx = document.getElementById('mainChart').getContext('2d');
+        const comparisonChartCtx = document.getElementById('comparisonChart').getContext('2d');
+        const distributionChartCtx = document.getElementById('distributionChart').getContext('2d');
+        const paymentChartCtx = document.getElementById('paymentChart').getContext('2d');
+        
+        // Chart instances
+        let mainChart, comparisonChart, distributionChart, paymentChart;
+        
+        // Fetch data
+        Promise.all([
+          fetch(meiuDataFile).then(res => res.json()),
+          fetch(s02DataFile).then(res => res.json())
+        ])
+        .then(([meiuData, s02Data]) => {
+          allData = {
+            meiu: processData(meiuData),
+            s02: processData(s02Data),
+            lastUpdated: new Date().toISOString()
+          };
+          
+          // Initialize date range picker
+          initDateRangePicker();
+          
+          // Render all charts
+          renderAllCharts();
+        })
+        .catch(error => {
+          console.error('Error loading data:', error);
+        });
+        
+        // Process raw data into structured format
+        function processData(rawData) {
+          const processed = {
+            byDate: {},
+            members: {},
+            stats: {
+              totalSalary: 0,
+              totalTasks: 0,
+              paidAmount: 0,
+              pendingAmount: 0
+            }
+          };
+          
+          // Process by date
+          Object.entries(rawData).forEach(([date, entries]) => {
+            processed.byDate[date] = {
+              total: 0,
+              count: 0,
+              paid: 0,
+              pending: 0
+            };
+            
+            entries.forEach(entry => {
+              const amount = entry.quantity * entry.unitPrice;
+              
+              // Date stats
+              processed.byDate[date].total += amount;
+              processed.byDate[date].count += entry.quantity;
+              if (entry.status === 'Đã thanh toán') {
+                processed.byDate[date].paid += amount;
+              } else {
+                processed.byDate[date].pending += amount;
+              }
+              
+              // Member stats
+              if (!processed.members[entry.name]) {
+                processed.members[entry.name] = {
+                  total: 0,
+                  count: 0,
+                  lastDate: date
+                };
+              }
+              processed.members[entry.name].total += amount;
+              processed.members[entry.name].count += entry.quantity;
+              
+              // Overall stats
+              processed.stats.totalSalary += amount;
+              processed.stats.totalTasks += entry.quantity;
+              if (entry.status === 'Đã thanh toán') {
+                processed.stats.paidAmount += amount;
+              } else {
+                processed.stats.pendingAmount += amount;
+              }
+            });
+          });
+          
+          return processed;
+        }
+        
+        // Initialize date range picker
+        function initDateRangePicker() {
+          // In a real app, you would use a library like flatpickr
+          dateRangeFilter.addEventListener('focus', function() {
+            this.type = 'date';
+          });
+          
+          dateRangeFilter.addEventListener('blur', function() {
+            if (!this.value) this.type = 'text';
+          });
+        }
+        
+        // Render all charts
+        function renderAllCharts() {
+          renderMainChart();
+          renderComparisonChart();
+          renderDistributionChart();
+          renderPaymentChart();
+          updateSummaryData();
+        }
+        
+        // Render main chart (salary over time)
+        function renderMainChart() {
+          const { labels, meiuData, s02Data } = getChartData();
+          
+          if (mainChart) mainChart.destroy();
+          
+          const datasets = [];
+          
+          if (currentBranch === 'all' || currentBranch === 'meiu') {
+            datasets.push({
+              label: 'MEIU',
+              data: meiuData,
+              borderColor: '#4361ee',
+              backgroundColor: 'rgba(67, 97, 238, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true
+            });
+          }
+          
+          if (currentBranch === 'all' || currentBranch === 's02') {
+            datasets.push({
+              label: 'S02-LOPERS',
+              data: s02Data,
+              borderColor: '#4cc9f0',
+              backgroundColor: 'rgba(76, 201, 240, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true
+            });
+          }
+          
+          mainChart = new Chart(mainChartCtx, {
+            type: currentChartType,
+            data: {
+              labels: labels,
+              datasets: datasets
+            },
+            options: getChartOptions('Tổng lương theo thời gian', true)
+          });
+        }
+        
+        // Render comparison chart
+        function renderComparisonChart() {
+          const meiuAvg = calculateAverage(allData.meiu);
+          const s02Avg = calculateAverage(allData.s02);
+          
+          if (comparisonChart) comparisonChart.destroy();
+          
+          comparisonChart = new Chart(comparisonChartCtx, {
+            type: 'radar',
+            data: {
+              labels: ['Lương trung bình', 'Số task trung bình', 'Tỷ lệ thanh toán'],
+              datasets: [
+                {
+                  label: 'MEIU',
+                  data: [
+                    meiuAvg.avgSalary,
+                    meiuAvg.avgTasks,
+                    meiuAvg.paymentRatio
+                  ],
+                  backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                  borderColor: '#4361ee',
+                  borderWidth: 2
+                },
+                {
+                  label: 'S02-LOPERS',
+                  data: [
+                    s02Avg.avgSalary,
+                    s02Avg.avgTasks,
+                    s02Avg.paymentRatio
+                  ],
+                  backgroundColor: 'rgba(76, 201, 240, 0.2)',
+                  borderColor: '#4cc9f0',
+                  borderWidth: 2
+                }
+              ]
+            },
+            options: getChartOptions('So sánh hiệu suất nhóm', false)
+          });
+        }
+        
+        // Calculate average values for comparison
+        function calculateAverage(branchData) {
+          const days = Object.keys(branchData.byDate).length;
+          const members = Object.keys(branchData.members).length;
+          
+          return {
+            avgSalary: branchData.stats.totalSalary / (days || 1),
+            avgTasks: branchData.stats.totalTasks / (days || 1),
+            paymentRatio: branchData.stats.paidAmount / (branchData.stats.totalSalary || 1) * 100
+          };
+        }
+        
+        // Render distribution chart
+        function renderDistributionChart() {
+          const { labels, data } = getMemberDistributionData();
+          
+          if (distributionChart) distributionChart.destroy();
+          
+          distributionChart = new Chart(distributionChartCtx, {
+            type: 'pie',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: data,
+                backgroundColor: [
+                  '#4361ee', '#4cc9f0', '#3a0ca3', '#4895ef', '#3f37c9',
+                  '#4361ee80', '#4cc9f080', '#3a0ca380', '#4895ef80', '#3f37c980'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: getChartOptions('Phân bổ lương theo thành viên', false)
+          });
+        }
+        
+        // Get member distribution data
+        function getMemberDistributionData() {
+          let members = [];
+          
+          if (currentBranch === 'all' || currentBranch === 'meiu') {
+            members = members.concat(Object.entries(allData.meiu.members).map(([name, data]) => ({
+              name,
+              amount: data.total,
+              team: 'meiu'
+            })));
+          }
+          
+          if (currentBranch === 'all' || currentBranch === 's02') {
+            members = members.concat(Object.entries(allData.s02.members).map(([name, data]) => ({
+              name,
+              amount: data.total,
+              team: 's02'
+            })));
+          }
+          
+          // Sort by amount and take top 10
+          members.sort((a, b) => b.amount - a.amount);
+          const topMembers = members.slice(0, 10);
+          
+          // Update top member info
+          if (topMembers.length > 0) {
+            document.getElementById('topMember').textContent = topMembers[0].name;
+          }
+          
+          return {
+            labels: topMembers.map(m => m.name),
+            data: topMembers.map(m => m.amount)
+          };
+        }
+        
+        // Render payment status chart
+        function renderPaymentChart() {
+          let paid = 0, pending = 0;
+          
+          if (currentBranch === 'all' || currentBranch === 'meiu') {
+            paid += allData.meiu.stats.paidAmount;
+            pending += allData.meiu.stats.pendingAmount;
+          }
+          
+          if (currentBranch === 'all' || currentBranch === 's02') {
+            paid += allData.s02.stats.paidAmount;
+            pending += allData.s02.stats.pendingAmount;
+          }
+          
+          // Update summary
+          document.getElementById('paidAmount').textContent = paid.toLocaleString() + 'đ';
+          document.getElementById('pendingAmount').textContent = pending.toLocaleString() + 'đ';
+          
+          if (paymentChart) paymentChart.destroy();
+          
+          paymentChart = new Chart(paymentChartCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Đã thanh toán', 'Chờ xử lý'],
+              datasets: [{
+                data: [paid, pending],
+                backgroundColor: [
+                  'rgba(46, 204, 113, 0.7)',
+                  'rgba(243, 156, 18, 0.7)'
+                ],
+                borderColor: [
+                  'rgba(46, 204, 113, 1)',
+                  'rgba(243, 156, 18, 1)'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: getChartOptions('Trạng thái thanh toán', false)
+          });
+        }
+        
+        // Get data for main chart based on current period
+        function getChartData() {
+          const meiuData = allData.meiu.byDate;
+          const s02Data = allData.s02.byDate;
+          
+          // In a real app, you would implement proper date filtering
+          // This is a simplified version
+          
+          // Get all unique dates from both branches
+          const allDates = new Set([
+            ...Object.keys(meiuData),
+            ...Object.keys(s02Data)
+          ]);
+          
+          // Sort dates
+          const sortedDates = Array.from(allDates).sort((a, b) => {
+            const [aDay, aMonth, aYear] = a.split('/').map(Number);
+            const [bDay, bMonth, bYear] = b.split('/').map(Number);
+            return new Date(aYear, aMonth - 1, aDay) - new Date(bYear, bMonth - 1, bDay);
+          });
+          
+          // For demo, we'll just use all available dates
+          const labels = sortedDates;
+          const meiuValues = labels.map(date => meiuData[date] ? meiuData[date].total : 0);
+          const s02Values = labels.map(date => s02Data[date] ? s02Data[date].total : 0);
+          
+          return {
+            labels,
+            meiuData: meiuValues,
+            s02Data: s02Values
+          };
+        }
+        
+        // Get common chart options
+        function getChartOptions(title, showLegend) {
+          return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: showLegend,
+                position: 'top',
+              },
+              title: {
+                display: false,
+                text: title
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) label += ': ';
+                    if (context.parsed.y !== undefined) {
+                      label += context.parsed.y.toLocaleString() + 'đ';
+                    } else {
+                      label += context.raw.toLocaleString() + 'đ';
+                    }
+                    return label;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return value.toLocaleString() + 'đ';
+                  }
+                }
+              }
+            }
+          };
+        }
+        
+        // Update summary data
+        function updateSummaryData() {
+          let total = 0;
+          
+          if (currentBranch === 'all' || currentBranch === 'meiu') {
+            total += allData.meiu.stats.totalSalary;
+          }
+          
+          if (currentBranch === 'all' || currentBranch === 's02') {
+            total += allData.s02.stats.totalSalary;
+          }
+          
+          document.getElementById('totalSalary').textContent = total.toLocaleString() + 'đ';
+          
+          // Random change for demo (in real app, calculate actual change)
+          const change = (Math.random() * 10).toFixed(1);
+          const changeElement = document.getElementById('salaryChange');
+          changeElement.textContent = `${change}% `;
+          
+          if (Math.random() > 0.5) {
+            changeElement.className = 'summary-value up';
+            changeElement.innerHTML = `${change}% <i class="fas fa-arrow-up"></i>`;
+          } else {
+            changeElement.className = 'summary-value down';
+            changeElement.innerHTML = `${change}% <i class="fas fa-arrow-down"></i>`;
+          }
+        }
+        
+        // Event listeners
+        periodBtns.forEach(btn => {
+          btn.addEventListener('click', function() {
+            periodBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentPeriod = this.getAttribute('data-period');
+            renderAllCharts();
+          });
+        });
+        
+        branchFilter.addEventListener('change', function() {
+          currentBranch = this.value;
+          renderAllCharts();
+        });
+        
+        chartTypeFilter.addEventListener('change', function() {
+          currentChartType = this.value;
+          renderMainChart();
+        });
+        
+        // Fullscreen chart functionality
+        document.querySelectorAll('.chart-fullscreen').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const chartId = this.getAttribute('data-chart');
+            showFullscreenChart(chartId);
+          });
+        });
+        
+        // Show chart in fullscreen modal
+        function showFullscreenChart(chartId) {
+          const modal = document.getElementById('fullscreenModal');
+          const canvas = document.getElementById('fullscreenChartCanvas');
+          const title = document.getElementById('fullscreenChartTitle');
+          const ctx = canvas.getContext('2d');
+          
+          // Set title based on chart
+          switch(chartId) {
+            case 'mainChart':
+              title.textContent = 'Biểu đồ lương theo thời gian';
+              break;
+            case 'comparisonChart':
+              title.textContent = 'So sánh hiệu suất nhóm';
+              break;
+            case 'distributionChart':
+              title.textContent = 'Phân bổ lương theo thành viên';
+              break;
+            case 'paymentChart':
+              title.textContent = 'Trạng thái thanh toán';
+              break;
+          }
+          
+          // Clone the chart to the modal
+          if (window[chartId]) {
+            const config = window[chartId].config;
+            new Chart(ctx, config);
+          }
+          
+          // Show modal
+          modal.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        }
+        
+        // Close fullscreen modal
+        document.querySelector('.close-modal').addEventListener('click', function() {
+          const modal = document.getElementById('fullscreenModal');
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+          
+          // Destroy the chart in modal
+          const canvas = document.getElementById('fullscreenChartCanvas');
+          if (canvas.chart) {
+            canvas.chart.destroy();
+          }
+        });
+        
+        // Export charts
+        document.getElementById('exportCharts').addEventListener('click', function() {
+          // In a real app, you would implement actual export functionality
+          console.log('Exporting charts...');
+        });
+      });
+      </script>
+      
+
+    
+</body>
+</html>
