@@ -302,7 +302,7 @@
             localStorage.setItem('isAuthenticated', 'true');
             
             // Chuyển hướng đến trang chính
-            window.location.href = '../trang-chu.html';
+            window.location.href = '../bang-luong/index.html';
           } else {
             // Hiển thị thông báo lỗi
             errorMessage.style.display = 'block';
@@ -319,7 +319,7 @@
 
       // Kiểm tra nếu đã đăng nhập thì chuyển hướng luôn
       if (localStorage.getItem('isAuthenticated') === 'true') {
-        window.location.href = '../trang-chu.html';
+        window.location.href = '../bang-luong/index.html';
       }
 
       // Focus vào ô username khi trang load
