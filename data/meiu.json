@@ -123,6 +123,76 @@
         "unitPrice": 300,
         "status": "Chờ xử lý"
     }
+],
+  
+"30/06/2025": [
+    {
+        "name": "Meo",
+        "quantity": 398,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Hùng",
+        "quantity": 427,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Trang",
+        "quantity": 598,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Nam Ái",
+        "quantity": 346,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Xuan Van",
+        "quantity": 710,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Khánh Ngọc",
+        "quantity": 90,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Nhẫn",
+        "quantity": 115,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Bảo Ngọc",
+        "quantity": 728,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Hữu Trường",
+        "quantity": 150,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Thảo",
+        "quantity": 76,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    },
+    {
+        "name": "Nguyễn Đạt",
+        "quantity": 75,
+        "unitPrice": 300,
+        "status": "Chờ xử lý"
+    }
 ]
+
 
 }
